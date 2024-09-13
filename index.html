@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Personal Finance</title>
+
+    <style>
+        body {
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-container {
+            margin-bottom: 20px;
+        }
+
+        .graph-container {
+            width: 40%;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Personal Finance</h1>
+
+    <div class = "input-container">
+        <label>Enter the type</label>
+        <input type = "text" id = "type">
+        <label>Enter the Amount</label>
+        <input type = "number" id = "amount">
+        <label>Enter Date</label>
+        <input type = "date" id = "date">
+    </div>
+
+    <button onclick = "addIncomeExpense()">Add Expenses/Income</button>
+
+    <div class = "graph-container">
+        <canvas id = "canvas" width = "400" height = "400"></canvas>
+    </div>
+
+    <div class = "graph-container">
+        <canvas id = "canvas2" width = "400" height = "400"></canvas>
+    </div>
+
+    <div class = "graph-container">
+        <canvas id = "canvas3" width = "400" height = "400"></canvas>
+    </div>
+
+    <script src = "https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        var canvas = document.getElementById ("canvas");
+        var canvas2 = document.getElementById ("canvas2");
+        var canvas3 = document.getElementById ("canvas3");
+
+        var chart3 = new Chart (canvas3, {
+            type: "pie", 
+
+            data: {
+                labels: [],
+                datasets: [{
+                    data: [],
+                    backgroundColor: ["red", "yellow", "purple", "pink"]
+                }]
+            },
+            
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: "Income"
+                    }
+                }
+            }
+        });
+
+        var chart2 = new Chart (canvas2, {
+            type: "pie", 
+
+            data: {
+                labels: [],
+                datasets: [{
+                    data: [],
+                    backgroundColor: ["red", "yellow", "purple", "pink"]
+                }]
+            },
+
+            options: {
+                responsive: true,
+
+                plugins: {
+                    title: {
+                        display: true,
+                        text: "Expenses"
+                    }
+                }
+            }
+        });
+        
+        var chart = new Chart (canvas, {
+            type: "line",
+
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        data: [], 
+                        borderColor: "green",
+                        label: "income"
+                    },
+
+                    {
+                        data: [],
+                        borderColor: "blue",
+                        label: "expenses"
+                    }
+                ]
+            },
+
+
+            options: {
+                responsive: true,
+
+                scales: {
+                    y: {
+                        title: {
+                            display: true,
+                            text: "Amount"
+                        }
+                    },
+
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Date"
+                        }
+                    }
+                },
+
+                plugins: {
+                    title: {
+                        display: true,
+                        text: "Income Vs Expenses"
+                    }
+                }
+            }
+        });
+
+        var date_list = [];
+        var income_amount_list = [];
+        var income_type_list = [];
+        var expense_amount_list = [];
+        var expense_type_list = [];
+        
+        function addIncomeExpense () {
+            var type = document.getElementById ("type").value;
+            var amount = document.getElementById ("amount").value;
+            var date = new Date (document.getElementById ("date").value).toLocaleDateString ();
+
+            if (type.includes ("income")) {
+                income_amount_list.push (amount);
+                income_type_list.push (type);
+            } else {
+                expense_amount_list.push (amount);
+                expense_type_list.push (type);
+            }
+
+            date_list.push (date);
+            updateCharts ();
+        }
+
+        function updateCharts () {
+            chart.data.labels = date_list;
+            chart.data.datasets[0].data = income_amount_list;
+            chart.data.datasets[1].data = expense_amount_list;
+            chart.update ();
+
+            chart2.data.labels = expense_type_list;
+            chart2.data.datasets[0].data = expense_amount_list;
+            chart2.update();
+            
+            chart3.data.labels = income_type_list; 
+            chart3.data.datasets[0].data = income_amount_list;
+            chart3.update();
+        }
+
+    </script>    
+</body>
+
+</html>
